@@ -7,22 +7,48 @@ import { PokemonEntity } from './pokemon.entity';
 export class SQLitePokemonRepository implements PokemonRepository {
   constructor(private readonly dataSource: DataSource) {}
 
+  private get pokemonTable() {
+    return this.dataSource.getRepository(PokemonEntity);
+  }
+
   async findAll(): Promise<Pokemon[]> {
-    // On fait un cast (mot clé: 'as') du type PokemonEntity[] vers Pokemon[] car les deux types sont identiques sur leurs champs
     // Pas besoin de transformer le tableau PokemonEntity en tableau Pokemon
-    // https://www.w3schools.com/typescript/typescript_casting.php
-    return this.dataSource.manager.find(PokemonEntity) as Promise<Pokemon[]>;
+    // Les types se superposent pour l'instant (ils sont pareil, même structure)
+    return this.pokemonTable.find();
   }
-  findOne(id: number): Pokemon | undefined {
-    throw new Error('not implemented');
+
+  findOne(id: number): Promise<Pokemon | undefined> {
+    return this.pokemonTable.findOne({
+      where: {
+        id,
+      },
+    });
   }
-  create(pokemon: Pokemon): boolean {
-    throw new Error('not implemented');
+
+  async create(pokemon: Pokemon): Promise<void> {
+    try {
+      this.pokemonTable.create(pokemon);
+      return Promise.resolve();
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
-  update(id: number, pokemon: Omit<Pokemon, 'id'>): boolean {
-    throw new Error('not implemented');
+
+  async update(id: number, pokemon: Omit<Pokemon, 'id'>): Promise<void> {
+    try {
+      this.pokemonTable.update(id, pokemon);
+      return Promise.resolve();
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
-  delete(id: number): boolean {
-    throw new Error('not implemented');
+
+  async delete(id: number): Promise<void> {
+    try {
+      this.pokemonTable.delete(id);
+      return Promise.resolve();
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
 }
