@@ -15,34 +15,41 @@ const pokemons: Pokemon[] = [
 ];
 
 export class InMemoryPokemonRepository implements PokemonRepository {
-  findAll(): Pokemon[] {
+  async findAll(): Promise<Pokemon[]> {
     return pokemons;
   }
 
-  findOne(id: number): Pokemon | undefined {
+  async findOne(id: number): Promise<Pokemon | undefined> {
     return pokemons.find((pokemon) => pokemon.id === id);
   }
 
-  create(pokemon: Pokemon): boolean {
+  async create(pokemon: Pokemon): Promise<void> {
     pokemons.push(pokemon);
-    return true;
+    // ou return; au choix
+    return Promise.resolve();
   }
 
-  update(id: number, pokemon: Omit<Pokemon, 'id'>): boolean {
+  async update(id: number, pokemon: Omit<Pokemon, 'id'>): Promise<void> {
     const index = pokemons.findIndex((pokemon) => pokemon.id === id);
 
-    if (index === -1) return false;
+    if (index === -1)
+      Promise.reject(new Error('Update échoué car pas de pokemon'));
 
     pokemons[index] = { ...pokemons[index], ...pokemon };
-    return true;
+
+    // ou Promise.resolve() au choix;
+    return;
   }
 
-  delete(id: number): boolean {
+  delete(id: number): Promise<void> {
     const index = pokemons.findIndex((pokemon) => pokemon.id === id);
 
-    if (index > -1) return false;
+    if (index > -1)
+      Promise.reject(
+        new Error('Suppression échouée car pas de pokemon trouvé'),
+      );
 
     pokemons.splice(index, 1);
-    return true;
+    return;
   }
 }

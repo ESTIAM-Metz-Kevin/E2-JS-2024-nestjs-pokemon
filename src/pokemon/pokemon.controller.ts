@@ -31,12 +31,12 @@ export class PokemonController {
   ) {}
 
   @Get()
-  list(): Pokemon[] {
+  list(): Promise<Pokemon[]> {
     return this.pokemonRepository.findAll();
   }
 
   @Get(':id')
-  detail(@Param('id', ParseIntPipe) id: number): Pokemon {
+  detail(@Param('id', ParseIntPipe) id: number): Promise<Pokemon> {
     const pokemon = this.pokemonRepository.findOne(id);
 
     if (!pokemon) throw new NotFoundException('Pokemon not found');
@@ -46,24 +46,33 @@ export class PokemonController {
 
   @Post()
   @UsePipes(new ZodValidationPipe(pokemonCreateSchema))
-  create(@Body() newPokemon: CreatePokemonRequest) {
-    if (!this.pokemonRepository.create(newPokemon))
+  async create(@Body() newPokemon: CreatePokemonRequest) {
+    try {
+      await this.pokemonRepository.create(newPokemon);
+    } catch (error) {
       throw new InternalServerErrorException();
+    }
   }
 
   @Put(':id')
   @UsePipes(new ZodValidationPipe(pokemonUpdateSchema))
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updatePokemon: UpdatePokemonRequest,
   ) {
-    if (this.pokemonRepository.update(id, updatePokemon))
+    try {
+      await this.pokemonRepository.update(id, updatePokemon);
+    } catch (error) {
       throw new NotFoundException('Pokemon not found');
+    }
   }
 
   @Delete(':id')
-  delete(@Param('id', ParseIntPipe) id: number) {
-    if (this.pokemonRepository.delete(id))
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    try {
+      await this.pokemonRepository.delete(id);
+    } catch (error) {
       throw new NotFoundException('Pokemon not found');
+    }
   }
 }
