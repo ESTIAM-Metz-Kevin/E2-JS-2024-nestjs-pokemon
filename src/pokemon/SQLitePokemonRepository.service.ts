@@ -27,7 +27,7 @@ export class SQLitePokemonRepository implements PokemonRepository {
 
   async create(pokemon: Pokemon): Promise<void> {
     try {
-      this.pokemonTable.create(pokemon);
+      await this.pokemonTable.create(pokemon);
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);
@@ -36,7 +36,7 @@ export class SQLitePokemonRepository implements PokemonRepository {
 
   async update(id: number, pokemon: Omit<Pokemon, 'id'>): Promise<void> {
     try {
-      this.pokemonTable.update(id, pokemon);
+      await this.pokemonTable.update(id, pokemon);
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);
@@ -45,7 +45,7 @@ export class SQLitePokemonRepository implements PokemonRepository {
 
   async delete(id: number): Promise<void> {
     try {
-      this.pokemonTable.delete(id);
+      await this.pokemonTable.delete(id);
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);

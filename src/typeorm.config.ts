@@ -6,7 +6,6 @@ const config: TypeOrmModuleOptions = {
   database: './db/estiam.sqlite',
   entities: [PokemonEntity],
   synchronize: true, // Not in production
-  logging: true, // Not in production
 };
 
 export default config;
