@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   InternalServerErrorException,
   NotFoundException,
   Param,
@@ -14,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { ZodValidationPipe } from '../zod.pipe';
 import { Pokemon, pokemonSchema } from './models';
-import { PokemonService } from './pokemon.service';
+import { PokemonRepository } from './pokemonRepository.interface';
 
 const pokemonCreateSchema = pokemonSchema.required();
 const pokemonUpdateSchema = pokemonSchema.omit({ id: true });
@@ -24,16 +25,19 @@ type UpdatePokemonRequest = Required<z.infer<typeof pokemonUpdateSchema>>;
 
 @Controller('pokemons')
 export class PokemonController {
-  constructor(private readonly pokemonService: PokemonService) {}
+  constructor(
+    @Inject('POKEMON_REPOSITORY')
+    private readonly pokemonRepository: PokemonRepository,
+  ) {}
 
   @Get()
   list(): Pokemon[] {
-    return this.pokemonService.findAll();
+    return this.pokemonRepository.findAll();
   }
 
   @Get(':id')
   detail(@Param('id', ParseIntPipe) id: number): Pokemon {
-    const pokemon = this.pokemonService.findOne(id);
+    const pokemon = this.pokemonRepository.findOne(id);
 
     if (!pokemon) throw new NotFoundException('Pokemon not found');
 
@@ -43,7 +47,7 @@ export class PokemonController {
   @Post()
   @UsePipes(new ZodValidationPipe(pokemonCreateSchema))
   create(@Body() newPokemon: CreatePokemonRequest) {
-    if (!this.pokemonService.create(newPokemon))
+    if (!this.pokemonRepository.create(newPokemon))
       throw new InternalServerErrorException();
   }
 
@@ -53,13 +57,13 @@ export class PokemonController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updatePokemon: UpdatePokemonRequest,
   ) {
-    if (this.pokemonService.update(id, updatePokemon))
+    if (this.pokemonRepository.update(id, updatePokemon))
       throw new NotFoundException('Pokemon not found');
   }
 
   @Delete(':id')
   delete(@Param('id', ParseIntPipe) id: number) {
-    if (this.pokemonService.delete(id))
+    if (this.pokemonRepository.delete(id))
       throw new NotFoundException('Pokemon not found');
   }
 }

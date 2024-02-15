@@ -1,4 +1,5 @@
 import { Pokemon } from './models';
+import { PokemonRepository } from './pokemonRepository.interface';
 
 const pokemons: Pokemon[] = [
   { id: 1, name: 'Bulbizarre' },
@@ -13,7 +14,7 @@ const pokemons: Pokemon[] = [
   { id: 10, name: 'Chenipan' },
 ];
 
-export class PokemonService {
+export class InMemoryPokemonRepository implements PokemonRepository {
   findAll(): Pokemon[] {
     return pokemons;
   }

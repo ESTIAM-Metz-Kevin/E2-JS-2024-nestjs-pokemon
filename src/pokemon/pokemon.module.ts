@@ -1,9 +1,14 @@
 import { Module } from '@nestjs/common';
 import { PokemonController } from './pokemon.controller';
-import { PokemonService } from './pokemon.service';
+import { InMemoryPokemonRepository } from './inMemoryPokemonRepository.service';
 
 @Module({
   controllers: [PokemonController],
-  providers: [PokemonService],
+  providers: [
+    {
+      provide: 'POKEMON_REPOSITORY',
+      useClass: InMemoryPokemonRepository,
+    },
+  ],
 })
 export class PokemonModule {}
