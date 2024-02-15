@@ -1,7 +1,8 @@
-import { Column, Entity, Index } from 'typeorm';
+import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class PokemonEntity {
+  @PrimaryColumn()
   @Index({ unique: true })
   id: number;
 

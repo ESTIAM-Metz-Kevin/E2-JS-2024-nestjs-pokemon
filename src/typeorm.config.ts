@@ -1,14 +1,12 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { PokemonEntity } from './pokemon/pokemon.entity';
 
 const config: TypeOrmModuleOptions = {
-  type: 'mysql',
-  host: 'localhost',
-  port: 3306,
-  username: 'root',
-  password: 'root',
-  database: 'test',
-  entities: [],
-  synchronize: true, //  Setting synchronize: true shouldn't be used in production - otherwise you can lose production data.
+  type: 'sqlite',
+  database: './db/estiam.sqlite',
+  entities: [PokemonEntity],
+  synchronize: true, // Not in production
+  logging: true, // Not in production
 };
 
 export default config;

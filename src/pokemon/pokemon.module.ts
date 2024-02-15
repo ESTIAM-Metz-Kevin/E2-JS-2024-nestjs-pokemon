@@ -1,13 +1,17 @@
 import { Module } from '@nestjs/common';
 import { PokemonController } from './pokemon.controller';
-import { InMemoryPokemonRepository } from './inMemoryPokemonRepository.service';
+import { SQLitePokemonRepository } from './SQLitePokemonRepository.service';
+import { DataSource } from 'typeorm';
 
 @Module({
   controllers: [PokemonController],
   providers: [
     {
       provide: 'POKEMON_REPOSITORY',
-      useClass: InMemoryPokemonRepository,
+      useFactory: (datasource: DataSource) => {
+        return new SQLitePokemonRepository(datasource);
+      },
+      inject: [DataSource],
     },
   ],
 })
