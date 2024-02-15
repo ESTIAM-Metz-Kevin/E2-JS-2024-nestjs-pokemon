@@ -27,7 +27,7 @@ export class SQLitePokemonRepository implements PokemonRepository {
 
   async create(pokemon: Pokemon): Promise<void> {
     try {
-      await this.pokemonTable.create(pokemon);
+      await this.pokemonTable.save(pokemon);
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);
